@@ -1,27 +1,17 @@
 from app.cafe import Cafe
-from app.errors import (VaccineError, NotWearingMaskError,
-                        NotVaccinatedError, OutdatedVaccineError)
-import datetime
+from app.errors import VaccineError, NotWearingMaskError
 
 
 def go_to_cafe(friends: list, cafe: Cafe) -> str:
+    masks_to_buy = 0
     for friend in friends:
         try:
-            if "vaccine" not in friend:
-                raise NotVaccinatedError
-            if friend["vaccine"]["expiration_date"] < datetime.date.today():
-                raise OutdatedVaccineError
+            cafe.visit_cafe(friend)
         except VaccineError:
             return "All friends should be vaccinated"
+        except NotWearingMaskError:
+            masks_to_buy += 1
 
-    masks_to_buy = sum(not f["wearing_a_mask"] for f in friends)
     if masks_to_buy > 0:
         return f"Friends should buy {masks_to_buy} masks"
-
-    try:
-        for friend in friends:
-            cafe.visit_cafe(friend)
-    except (VaccineError, NotWearingMaskError):
-        return "Something went wrong"
-    else:
-        return f"Friends can go to {cafe.name}"
+    return f"Friends can go to {cafe.name}"

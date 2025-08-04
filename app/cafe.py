@@ -16,6 +16,4 @@ class Cafe:
             raise NotWearingMaskError(
                 f"You have to wear mask to enter a {self.name}"
             )
-
-        else:
-            return f"Welcome to {self.name}"
+        return f"Welcome to {self.name}"
